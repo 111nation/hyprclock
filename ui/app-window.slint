@@ -1,52 +1,60 @@
+// Refactoring ui mark up
 component Clock inherits Text {
-	text: "00:00";
-
-	font-family: "Montserrat";
-	font-weight: 700;
-
-	color: white;
-
 	horizontal-alignment: center;
+
+	font-weight: 700;
+	color: white;
 }
 
-component ProgressBar inherits Rectangle {
+component Progress inherits Rectangle {
+	in property <percent> progress: 0%;
+
 	width: 100%;
 	height: 12px;
 
 	border-radius: 5px;
 	background: black;
-}
 
-component Progress inherits ProgressBar {
-	background: @linear-gradient(45deg, #33ccffee 0%, #00ff99ee 100%);
+	// Filled progress
+	Rectangle {
+		border-radius: parent.border-radius;
+		background: @linear-gradient(45deg, #33ccffee 0%, #00ff99ee 100%);
+		
+		height: parent.height;
+		width: parent.width * progress;
+		x: 0px;
+	}
 }
 
 component Control inherits Rectangle {
+	in property <string> font-family;
+	in property <string> text;
+
 	width: 100px;
 	height: 30px;
-
 	border-radius: 10px;
-
 	background: #595959aa;
 
 	Text {
-		text: "STOP";
-		font-family: "Montserrat";
-		font-weight: 600;
 		font-size: parent.height * 0.75;
-		
+		font-weight: 600;
 		color: white;
-	}
 
-	TouchArea {
+		// Passed properties
+		text: root.text;
+		font-family: root.font-family;
 	}
 }
 
 export component MainWindow inherits Window {
+	// in property - public to other scopes
+	// property - private
+	property <string> font: "Montserrat";
+
 	width: 300px;
 	height: 175px;
 
-	background: rgba(35, 38, 52, 0.7);	
+	background: rgba(35, 38, 52, 0.55);	
 
 	VerticalLayout {
 
@@ -56,19 +64,21 @@ export component MainWindow inherits Window {
 		padding-top: 10px;
 
 		Clock {
+			font-family: font;
 			font-size: (root.width)*0.25; 
+			text: "00:00";
 		}
 
-		ProgressBar {
-			Progress { x: 0px; width: 69%; }
-		}
+		Progress { progress: 69%; }
 
+		// Center button
 		HorizontalLayout {
+			alignment: center;
 			padding-top: 15px;
 			padding-bottom: 20px;
 
-			alignment: center;
-			Control { }
+			Control { font-family: font; text: "STOP"; }
 		}
+
 	}
 }
