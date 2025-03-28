@@ -50,11 +50,12 @@ export component MainWindow inherits Window {
 	// in property - public to other scopes
 	// property - private
 	property <string> font: "Montserrat";
+	in property <string> time;
 
 	width: 300px;
 	height: 175px;
 
-	background: rgba(35, 38, 52, 0.55);	
+	background: rgba(35, 38, 52, 0.65);	
 
 	VerticalLayout {
 
@@ -66,7 +67,7 @@ export component MainWindow inherits Window {
 		Clock {
 			font-family: font;
 			font-size: (root.width)*0.25; 
-			text: "00:00";
+			text: time;
 		}
 
 		Progress { progress: 69%; }
