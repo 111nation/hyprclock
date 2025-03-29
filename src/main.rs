@@ -1,12 +1,14 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod clock;
-use clock::init_timer;
-use clock::time_to_string;
 
 use time::Time;
+
 slint::include_modules!();
 use slint::SharedString;
+
+use clock::init_timer;
+use clock::time_to_string;
 
 fn main() -> Result<(), slint::PlatformError> {
     let window = MainWindow::new()?;
@@ -17,3 +19,9 @@ fn main() -> Result<(), slint::PlatformError> {
 
     window.run()
 }
+
+// std::time::Duration
+/*
+ * Represent span of time ranging from seconds to nanoseconds
+ * Used for timing, delays and measuring elapsed time
+ */ 
