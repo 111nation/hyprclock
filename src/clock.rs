@@ -1,23 +1,37 @@
-use time::Time;
+pub struct Time {
+    pub minute: u8,
+    pub second: u8
+}
 
-pub fn init_timer(minute: u8, second: u8) -> Result<Time, String> {
-    use time::Time;
+impl Time {
+    pub fn dec_second(&mut self) -> bool {
+        // true - successful decrementation
+        // false - second is already zero
+        
+        if self.second > 0 {
+            self.second -= 1;
+            return true;
 
-    match Time::from_hms(0, minute, second) {
-        Ok(t) => Ok(t),
-        Err(_) => Err(String::from("Could not initialize timer")),
+        } else if self.minute > 0 && self.second == 0 {
+            // Decrement to the next minute
+            self.minute -= 1;
+            self.second = 59;
+            return true;
+        }
+
+        return false;
+    }
+
+    pub fn to_str(&self) -> String {
+        let minute = format!("{}{}",
+            if self.minute < 10 { "0" } else { "" }, self.minute);
+
+        let second= format!("{}{}",
+            if self.second < 10 { "0" } else { "" }, self.second);
+
+        format!("{}:{}", minute, second)
     }
 
 }
 
-pub fn time_to_string(time: &Time) -> String {
-    let minute = format!("{}{}", 
-        // Add a zero to prevent cases like '5:01'
-        if time.minute() < 10 { "0" } else { "" }, time.minute()).to_string();
 
-    let second = format!("{}{}", 
-        // Add a zero to prevent cases like '15:0'
-        if time.second() < 10 { "0" } else { "" }, time.second()).to_string();
-
-    format!("{}:{}", minute, second).to_string()
-}
