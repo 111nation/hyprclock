@@ -18,11 +18,16 @@ component Progress inherits Rectangle {
 	// Filled progress
 	Rectangle {
 		border-radius: parent.border-radius;
-		background: @linear-gradient(45deg, #33ccffee 0%, #00ff99ee 100%);
+		background: @linear-gradient(45deg, #8aadf4ee 0%, #c6a0f6ee 100%);
 		
 		height: parent.height;
 		width: parent.width * progress;
 		x: 0px;
+
+		animate width {
+			duration: 300ms;
+			easing: ease-out;
+		}
 	}
 }
 
@@ -49,28 +54,31 @@ component Control inherits Rectangle {
 export component MainWindow inherits Window {
 	// in property - public to other scopes
 	// property - private
+	callback refresh();
 	property <string> font: "Montserrat";
 	in property <string> time;
+	in property <bool> clock_active: false;
+	in property <percent> progress;
 
 	width: 300px;
 	height: 175px;
 
 	background: rgba(35, 38, 52, 0.5);	
 
-	VerticalLayout {
 
+	VerticalLayout {
 		alignment: start;
 		padding-left: 25px;
 		padding-right: 25px;
 		padding-top: 10px;
 
-		Clock {
+		clock := Clock {
 			font-family: font;
 			font-size: (root.width)*0.25; 
 			text: time;
 		}
 
-		Progress { progress: 69%; }
+		Progress { progress: progress; }
 
 		// Center button
 		HorizontalLayout {
@@ -81,5 +89,13 @@ export component MainWindow inherits Window {
 			Control { font-family: font; text: "STOP"; }
 		}
 
+	}
+
+	timer := Timer {
+		interval: 1s;
+		running: clock_active;
+		triggered() => {
+			refresh();
+		}
 	}
 }

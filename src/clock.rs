@@ -1,3 +1,7 @@
+use slint::ToSharedString;
+slint::include_modules!();
+
+#[derive(Copy, Clone)] // Allow copying a time struct
 pub struct Time {
     pub minute: u8,
     pub second: u8
@@ -34,4 +38,13 @@ impl Time {
 
 }
 
+pub fn is_midnight(time: &Time) -> bool {
+    time.minute == 0 && time.second == 0
+}
 
+pub fn to_progress(curr_time: &Time, end_time: &Time) -> f32 {
+    let curr_minute: f32 = (curr_time.minute as f32 + (curr_time.second as f32/ 60f32)).into();
+    let end_minute: f32 = (end_time.minute as f32 + (end_time.second as f32 / 60f32)).into();
+    
+    (curr_minute / end_minute) * 100f32
+}
