@@ -3,6 +3,8 @@ use std::option::Option;
 use crate::clock;
 use clock::Time;
 
+const VERSION: &str = "0.1.0";
+
 pub fn parse_args (timer: &mut Time) -> bool {
     // true - successful
     // false - unsuccesful
@@ -12,14 +14,26 @@ pub fn parse_args (timer: &mut Time) -> bool {
     // If valid command continue
     let command = match args.get(1) {
         Some(arg) => arg,
-        None => return false,
+        None => {
+            // Defualt to 5min timer
+            timer.minute = 5;
+            timer.second = 0;
+            return true;
+        },
     };
 
     if command == "--timer" || command == "-t" {
         return parse_timer_args(&args, timer);
+    } else if command == "--help" || command == "-h" {
+        println!("{}", help_message());
+        return false;
+    } else if command == "--version" || command == "-v" {
+        println!("hyprclock: {VERSION}");
+        return false;
+    } else {
+        println!("Invalid command!\n\n{}", help_message());
+        return false;
     }
-
-    return true;
 }
 
 fn parse_timer_args(args: &Vec<String>, timer: &mut Time) -> bool {
@@ -97,4 +111,26 @@ fn is_valid_time(time: f32) -> bool {
     if time % 1.0 > 0.0 { return false; } 
     
     return true;
+}
+
+fn help_message() -> String {
+        let help_message = r#"
+        Usage: hyprclock [OPTIONS]
+
+        Options:
+          --timer, -t            Start a timer.
+          --help, -h                 Show this help message and exit.
+          --version, -v              Display the version of the app.
+
+        Timer format:
+          The timer format follows [number][unit], where:
+            - min, m   for minutes
+            - sec, s   for seconds
+
+        Example:
+          hyprclock --timer 5m   # Sets a timer for 5 minutes.
+          hyprclock --timer 30s  # Sets a timer for 30 seconds.
+        "#;
+
+        String::from(help_message)
 }

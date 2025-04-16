@@ -10,7 +10,6 @@ fn main() -> Result<(), slint::PlatformError>{
     let mut timer = clock::Time { minute: 0, second: 0 };
 
     if !args::parse_args(&mut timer) {
-        println!("Error parsing commands!");
         return Ok(());
     }
 
