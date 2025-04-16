@@ -1,4 +1,3 @@
-use slint::ToSharedString;
 slint::include_modules!();
 
 #[derive(Copy, Clone)] // Allow copying a time struct

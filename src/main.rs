@@ -3,15 +3,19 @@
 use slint::ToSharedString;
 slint::include_modules!();
 mod clock;
+mod args;
 
 
 fn main() -> Result<(), slint::PlatformError>{
-    let window = MainWindow::new()?;
-    let mut timer = clock::Time {
-        minute: 1,
-        second: 0,
-    };
+    let mut timer = clock::Time { minute: 0, second: 0 };
+
+    if !args::parse_args(&mut timer) {
+        println!("Error parsing commands!");
+        return Ok(());
+    }
+
     let duration = timer;
+    let window = MainWindow::new()?;
     
     update(&window, &timer, &duration);
     window.on_refresh({
