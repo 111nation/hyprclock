@@ -1,7 +1,7 @@
 # Hyprclock
 ---
 
-*A simple clock widget, originallyintended for hyprland, but usuable anywhere*
+*A simple clock widget, originally intended for hyprland, but usuable anywhere*
 
 #### Features
 * Pretty clock with animations
