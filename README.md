@@ -1,28 +1,29 @@
 # Hyprclock
 ---
 
-*A simple clock widget for the default hyprland theming, written with rust and slint*
+*A simple clock widget, originallyintended for hyprland, but usuable anywhere*
 
 #### Features
 * Pretty clock with animations
-* Launchable via command line
-* Use clock to set timers
+* Start via command line
 
 > [!Note]
-> **To do**
-> - Finalize clock animations
-> - Finalize clock logic
-> - Allow clock to launch and start via cli
-
-#### Installation
+> This project hasn't been officially released, the clock is missing customization features and etc...
 
 ##### Dependencies
 * Rust language
-* Slint crate
 
-Clone this repository in desired folder and run
+#### Installation
+For both linux, windows and MacOS, run.
+
 ```bash
 $ cargo run
 ```
-in project root.
+
+To access the clocks arguments
+```bash
+$ cargo run -- <arguments>
+```
+
+Replace `<arguments>` with your arguments
 
