@@ -55,40 +55,47 @@ export component MainWindow inherits Window {
 	// in property - public to other scopes
 	// property - private
 	callback refresh();
-	property <string> font: "Montserrat";
 	in property <string> time;
 	in property <bool> clock_active: false;
 	in property <percent> progress;
 
-	width: 300px;
-	height: 175px;
-
-	background: rgba(35, 38, 52, 0.5);	
-
+	/* TODO: Add somewhere to store config */
+	// Configurations
+	// Font
+	in property <string> font_family: "Adwaita Mono";
+	in property <int> font_weight: 700;
+	in property <percent> font_size: 25%;
+	in property <color> font_color: white;
+	// Window
+	in property <color> background_color: rgba(35, 38, 52, 0.5);
+	// Progressbar 
+	in property <percent> progress_width: 75%;
+	in property <percent> progress_height: 25%;
+	background: background_color;
 
 	VerticalLayout {
-		alignment: start;
-		padding-left: 25px;
-		padding-right: 25px;
-		padding-top: 10px;
+		alignment: center;
 
 		clock := Clock {
-			font-family: font;
-			font-size: (root.width)*0.25; 
+			font-family: font_family;
+			font-size: (root.height)*font_size; 
+			font-weight: font_weight;
+			color: font_color;
 			text: time;
 		}
 
-		Progress { progress: progress; }
-
-		// Center button
-		HorizontalLayout {
-			alignment: center;
-			padding-top: 15px;
-			padding-bottom: 20px;
-
-			Control { font-family: font; text: "STOP"; }
+		Progress { 
+			progress: progress; 
+		
+			width: progress_width;
+			height: progress_height;
 		}
 
+		// Center button
+/*		HorizontalLayout {
+			Control { font-family: font; text: "STOP"; }
+		}
+*/
 	}
 
 	timer := Timer {

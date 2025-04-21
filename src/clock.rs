@@ -1,4 +1,6 @@
 slint::include_modules!();
+use crate::slint_generatedMainWindow::MainWindow as Window;
+use slint::ToSharedString;
 
 #[derive(Copy, Clone)] // Allow copying a time struct
 pub struct Time {
@@ -47,3 +49,25 @@ pub fn to_progress(curr_time: &Time, end_time: &Time) -> f32 {
     
     (curr_minute / end_minute) * 100f32
 }
+
+pub fn update(window: &Window, curr_time: &Time, duration: &Time) {
+    window.set_time(curr_time.to_str().to_shared_string());
+    window.set_progress(100f32 - to_progress(&curr_time, &duration));
+}
+
+pub fn set_timer(window: &Window, mut timer: Time, duration: Time) {
+        // Weak handle due to getting reference within itself
+        // Prevents circular references
+        let win = window.as_weak().unwrap();
+    
+        window.on_refresh({
+            move || {
+                if !is_midnight(&timer) {
+                    timer.dec_second();
+                    update(&win, &timer, &duration);
+                } else {
+                    win.set_clock_active(false);
+                }
+            }
+        });
+ }
