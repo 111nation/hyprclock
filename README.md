@@ -1,29 +1,15 @@
 # Hyprclock
----
+_An up-and-coming clock widget to complement our desktop aesthetic_
 
-*A simple clock widget, originally intended for hyprland, but usuable anywhere*
+## Project News
+04 05 2025:
+  The project has undergone rewriting because the previous code was unsuitable and hard to debug
 
-#### Features
-* Pretty clock with animations
-* Start via command line
+## Installation
+_Make sure you have the Rust language properly installed_
 
-> [!Note]
-> This project hasn't been officially released, the clock is missing customization features and etc...
-
-##### Dependencies
-* Rust language
-
-#### Installation
-For both linux, windows and MacOS, run.
+On any operating system, enter the project root and execute
 
 ```bash
-$ cargo run
+cargo run
 ```
-
-To access the clocks arguments
-```bash
-$ cargo run -- <arguments>
-```
-
-Replace `<arguments>` with your arguments
-
