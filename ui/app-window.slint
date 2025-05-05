@@ -1,12 +1,25 @@
 export component MainWindow inherits Window {
+	callback clock_update;
+	
+	in property <bool> clock_active: false;
+	in property <string> time;
+
 	width: 400px;
 	height: 150px;
 	clock := Text {
-		text: "05:00";
+		text: time;
 		font-weight: 600;
 		color: white;
 
 		font-size: (root.width*0.85)*0.25;
 		max-width: root.width*0.85;
+	}
+
+	timer := Timer {
+		interval: 1s;
+		running: clock_active;
+		triggered => {
+			parent.clock_update();
+		}
 	}
 }
