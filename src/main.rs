@@ -3,21 +3,41 @@
 mod args;
 
 use args::*;
-use chrono::{Utc, prelude::*};
+use chrono::{prelude::*, NaiveTime, TimeDelta, DateTime};
 
 slint::include_modules!();
 
 
 fn main() {
     let window = MainWindow::new().unwrap();
+    let mut timer = NaiveTime::default();
 
-    match get_command() {
-       command::CURR_TIME => current_time(&window),
+    match get_command(&mut timer) {
+        Command::CurrTime => current_time(&window),
+        Command::Timer => start_timer(&window, &timer),
         _ => return,
     };
 
     window.set_clock_active(true);
     window.run().unwrap();
+}
+
+fn start_timer(window: &MainWindow, duration: &NaiveTime) {
+    // Makes the clock application start the timer function
+    let win = window.as_weak().unwrap();
+    let mut timer = duration.clone();
+
+    window.on_clock_update(move || {
+        win.set_time(time_to_string_naive(&timer).into());
+        
+        // Stop timer when reaching 00:00:00 
+        if timer == NaiveTime::default() {
+            win.set_clock_active(false);
+        }
+
+        // Decrements time by 1 second
+        (timer, _) = timer.overflowing_sub_signed(TimeDelta::try_seconds(1).unwrap());
+    });
 }
 
 fn current_time(window: &MainWindow) {
@@ -29,17 +49,16 @@ fn current_time(window: &MainWindow) {
     window.on_clock_update(move || {
         // Display time
         win.set_time(time_to_string(&time).into());
-        // Update time
-        if time == DateTime::<Utc>::MIN_UTC { 
-            win.set_clock_active(false);
-        }
-
         time = Local::now();
     });
 
 }
 
 fn time_to_string(time: &DateTime<Local>) -> String {
+    format!("{}", time.format("%H:%M:%S"))
+}
+
+fn time_to_string_naive(time: &NaiveTime) -> String {
     format!("{}", time.format("%H:%M:%S"))
 }
 

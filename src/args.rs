@@ -2,19 +2,18 @@ use std::env;
 
 use chrono::NaiveTime;
 
-
-pub mod command {
-    pub const ERR: u8 = 0;
-    pub const NONE: u8 = 0;
-    pub const CURR_TIME: u8 = 1;
-    pub const TIMER: u8 = 1;
+pub enum Command {
+    Error,
+    Nothing,
+    CurrTime,
+    Timer,
 }
 
-pub fn get_command(timer: &mut NaiveTime) -> u8 {
+pub fn get_command(timer: &mut NaiveTime) -> Command {
     // Returns state code if successful clock initialization
     // Parameter returns the time data needed to start the clock
     // If error or clock feature started, timer is not populated
-    use command::*;
+    use Command::*;
 
     let args: Vec<String> = env::args().collect();
     
@@ -23,22 +22,22 @@ pub fn get_command(timer: &mut NaiveTime) -> u8 {
         Some(dat) => dat,
         None => {
             println!("No commands was given, aborting");
-            return NONE;
+            return Nothing;
         }, 
     };
 
     if command == "--now" || command == "-n" {
-        return CURR_TIME;
+        return CurrTime;
     } else if command == "--timer" || command == "-t" {
         if !init_timer(&args, timer) {
-            return ERR;
+            return Error;
         }
             
-        return TIMER;
+        return Timer;
     }
 
     println!("Invalid command!");
-    ERR
+    Error
 }
 
 fn init_timer(args: &Vec<String>, timer: &mut NaiveTime) -> bool {
@@ -68,7 +67,7 @@ fn get_timer_args(args: &Vec<String>) -> Result<(u8, u8, u8), &str> {
     // 6h 4s 5min to form a 6 hour, 5 minute and 4 second timer
 
     // Default to 25 minute timer if no arguments given
-    if args.len() > 2 {
+    if args.len() <= 2 {
         return Ok((0, 25, 0));
     }
 
