@@ -13,7 +13,6 @@ fn main() {
 
     match get_command() {
        command::CURR_TIME => current_time(&window),
-        command::TIMER => start_timer(&window, 
         _ => return,
     };
 
