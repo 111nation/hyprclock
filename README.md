@@ -1,7 +1,18 @@
 # Hyprclock
-_An up-and-coming clock widget to complement our desktop aesthetic_
+_An up-and-coming clock widget to complement your desktop aesthetic_
+
+> [!Note] 
+> This is a hyprland first project! It works best using window managers on linux!
+> Still cross platform support has been implemented!
 
 ## Project News
+07 05 2025:
+    Timer Implementation has been shipped and now you are able to use the application as a basic study timer!
+    I am yet to add the ability of the clock to ping, send a notification or ring when the timer has ended!
+    
+    A new help page has been created with the help with AI, allowing you to fully understand the utility. 
+    I am yet to test the clock more on Windows and Linux.
+
 05 05 2025:
     Implemented 24 hour current time clock feature
 
