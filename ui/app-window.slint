@@ -4,15 +4,12 @@ export component MainWindow inherits Window {
 	in property <bool> clock_active: false;
 	in property <string> time;
 
-	width: 400px;
-	height: 150px;
 	clock := Text {
 		text: time;
 		font-weight: 600;
 		color: white;
 
 		font-size: (root.width*0.85)*0.25;
-		max-width: root.width*0.85;
 	}
 
 	timer := Timer {

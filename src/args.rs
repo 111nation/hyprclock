@@ -21,8 +21,7 @@ pub fn get_command(timer: &mut NaiveTime) -> Command {
     let command = match args.get(1) {
         Some(dat) => dat,
         None => {
-            println!("No commands was given, aborting");
-            return Nothing;
+            return CurrTime;
         }, 
     };
 
@@ -34,6 +33,9 @@ pub fn get_command(timer: &mut NaiveTime) -> Command {
         }
             
         return Timer;
+    } else if command == "--help" || command == "-h" {
+        print_help();
+        return Nothing;
     }
 
     println!("Invalid command!");
@@ -108,8 +110,12 @@ fn format_time(hour: &mut u8, min: &mut u8, sec: &mut u8) {
         *min = *min % 60u8;
     }
 
-    if *hour > 24 {
-        *hour = 24;
+    // Ensure time is not more than 23:59:59
+    let total_time = *hour as f32 + (*min as f32/60f32) + (*sec as f32/360f32); 
+    if total_time >= 24f32 {
+        *hour = 23;
+        *min = 59;
+        *sec = 59;
     }
 }
 
@@ -125,6 +131,12 @@ fn extract_magnitude_and_unit(arg: &String) -> Result<(u8, &str), &str> {
             None => continue,
         };
 
+        // Ensures to throw error when for example 'min5445ewfw' is entered
+        // AKA: unit entered but unexpected trailing characters still present
+        if arg.len()-(pos+unit.len()) > 0 {
+            return Err("Invalid format!");
+        }
+
         let number = match arg.get(..pos) {
             Some(dat) => dat,
             None => return Err("Failed to parse argument!"),
@@ -132,13 +144,43 @@ fn extract_magnitude_and_unit(arg: &String) -> Result<(u8, &str), &str> {
 
         let number = match number.parse::<u8>() {
             Ok(dat) => dat,
-            Err(_) =>  return Err("Invalid number and unit entered!"),
+            Err(_) =>  return Err("Invalid format or time range too big!"),
         };
 
         return Ok((number, unit));
 
     }
 
-    return Ok((0, ""));
+    return Err("Invalid format!");
 
 }
+
+fn print_help() {
+    println!("{}", r#"
+    hyprclock - A Minimalist Time Utility
+    =====================================
+
+    Usage:
+      hyprclock [OPTIONS]
+
+    Options:
+      -n, --now              Show the current time
+      -t, --timer [ARGS]     Start a countdown timer
+                             Format: <value><unit> [<value><unit>] ...
+                             Units: h/hour, m/min, s/sec
+                             Example: hyprclock --timer 1h 30min 10s
+
+      -h, --help             Show this help message
+
+    Notes:
+    - If no command is given, hyprclock defaults to showing the current time.
+    - Timer defaults to 25 minutes if no arguments are passed after --timer.
+    - Maximum supported time is 23h 59m 59s.
+
+    Examples:
+      hyprclock --now
+      hyprclock -t 10min
+      hyprclock --timer 1h 5m 20s
+    "#);
+}
+

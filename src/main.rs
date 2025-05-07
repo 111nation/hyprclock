@@ -44,17 +44,17 @@ fn current_time(window: &MainWindow) {
     // Function used to encapsulate all operations to initialize clock to 
     // display the current time.
     let win = window.as_weak().unwrap();
-    let mut time: DateTime<Local> = Local::now();
+    let mut time: DateTime<Utc> = Utc::now();
 
     window.on_clock_update(move || {
         // Display time
         win.set_time(time_to_string(&time).into());
-        time = Local::now();
+        time = Utc::now();
     });
 
 }
 
-fn time_to_string(time: &DateTime<Local>) -> String {
+fn time_to_string(time: &DateTime<Utc>) -> String {
     format!("{}", time.format("%H:%M:%S"))
 }
 
