@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 chrono = "0.4.41"
+rodio = "0.20.1"
 slint = "1.8.0"
 
 [build-dependencies]

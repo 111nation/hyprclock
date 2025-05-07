@@ -7,7 +7,12 @@ export component MainWindow inherits Window {
 	clock := Text {
 		text: time;
 		font-weight: 600;
-		color: white;
+		color: timer.running ? white : rgba(186, 187, 241, 0.5);
+
+		animate color {
+			duration: 750ms;
+			easing: ease-out;
+		}
 
 		font-size: (root.width*0.85)*0.25;
 	}

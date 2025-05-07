@@ -2,6 +2,8 @@
 
 mod args;
 
+use std::{io::BufWriter, process::Output};
+
 use args::*;
 use chrono::{prelude::*, NaiveTime, TimeDelta, DateTime};
 
@@ -33,6 +35,12 @@ fn start_timer(window: &MainWindow, duration: &NaiveTime) {
         // Stop timer when reaching 00:00:00 
         if timer == NaiveTime::default() {
             win.set_clock_active(false);
+            // Play notification sound
+            std::thread::spawn(|| {
+                if !play_sound("notification.mp3") {
+                    println!("Failed to play sound!");
+                }
+            });
         }
 
         // Decrements time by 1 second
@@ -62,3 +70,39 @@ fn time_to_string_naive(time: &NaiveTime) -> String {
     format!("{}", time.format("%H:%M:%S"))
 }
 
+fn play_sound(file_location: &str) -> bool {
+    use std::fs::File;
+    use std::io::BufReader;
+    use rodio::{Decoder, OutputStream, Sink};
+
+    // Get the output device
+    let (_stream, output_dev) = match OutputStream::try_default() {
+        Ok(dat) => dat,
+        Err(_) => return false,
+    };
+
+    // Attatch the sound device to the playback controller
+    let sink = match Sink::try_new(&output_dev) {
+        Ok(dat) => dat,
+        Err(_) => return false,
+    };
+
+    // Get the sound file
+    let file = match File::open(format!("{}", file_location)) {
+        Ok(dat) => dat,
+        Err(_) => return false,
+    };
+    
+    let file = BufReader::new(file); // Load chunks into memory
+
+    // Attatch the music file to the playback
+    let source = match Decoder::new(file) {
+        Ok(dat) => dat,
+        Err(_) => return false,
+    };
+
+    sink.append(source);
+    sink.sleep_until_end();
+
+    true
+}
