@@ -7,8 +7,11 @@ edition = "2021"
 
 [dependencies]
 chrono = "0.4.41"
+notify-rust = "4.11.7"
 rodio = "0.20.1"
+serde = "1.0.219"
 slint = "1.8.0"
+toml = "0.8.22"
 
 [build-dependencies]
 slint-build = "1.8.0"

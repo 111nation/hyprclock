@@ -1,11 +1,11 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod args;
-
-use std::{io::BufWriter, process::Output};
+mod config;
 
 use args::*;
 use chrono::{prelude::*, NaiveTime, TimeDelta, DateTime};
+use config::load_config;
 
 slint::include_modules!();
 
@@ -13,6 +13,8 @@ slint::include_modules!();
 fn main() {
     let window = MainWindow::new().unwrap();
     let mut timer = NaiveTime::default();
+
+    load_config(&window);
 
     match get_command(&mut timer) {
         Command::CurrTime => current_time(&window),
@@ -41,6 +43,10 @@ fn start_timer(window: &MainWindow, duration: &NaiveTime) {
                     println!("Failed to play sound!");
                 }
             });
+
+            if !notification("hyprclock", "Timer complete!", 5000) {
+                println!("Failed to display notification!");
+            }
         }
 
         // Decrements time by 1 second
@@ -105,4 +111,21 @@ fn play_sound(file_location: &str) -> bool {
     sink.sleep_until_end();
 
     true
+}
+
+fn notification(title: &str, description: &str, duration: u64) -> bool {
+    use notify_rust::Notification;
+    use notify_rust::Timeout;
+    use std::time::Duration;
+
+    match Notification::new()
+        .summary(title)
+        .body(description)
+        .timeout(Timeout::from(Duration::from_millis(duration)))
+        .show() {
+    
+        Ok(_) => return true,
+        Err(_) => return false,
+
+    };
 }
