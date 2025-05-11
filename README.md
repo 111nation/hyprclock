@@ -8,13 +8,11 @@ _An up-and-coming clock widget to complement your desktop aesthetic_
 ## Project News
 11 05 2025:
     Happy Mother's day!
-
     The clock has now been updated to be configurable, this feature is still in alpha and a lot of configurations are due to be released in the coming days to weeks!
 
 07 05 2025:
     Timer Implementation has been shipped and now you are able to use the application as a basic study timer!
     I am yet to add the ability of the clock to ping, send a notification or ring when the timer has ended!
-    
     A new help page has been created with the help with AI, allowing you to fully understand the utility. 
     I am yet to test the clock more on Windows and Linux.
 
