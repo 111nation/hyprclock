@@ -31,6 +31,8 @@ fn start_timer(window: &MainWindow, duration: &NaiveTime) {
     let win = window.as_weak().unwrap();
     let mut timer = duration.clone();
 
+    window.set_time(time_to_string_naive(&timer).into());
+
     window.on_clock_update(move || {
         win.set_time(time_to_string_naive(&timer).into());
         
@@ -59,6 +61,8 @@ fn current_time(window: &MainWindow) {
     // display the current time.
     let win = window.as_weak().unwrap();
     let mut time: DateTime<Utc> = Utc::now();
+
+    window.set_time(time_to_string(&time).into());
 
     window.on_clock_update(move || {
         // Display time

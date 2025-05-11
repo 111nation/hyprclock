@@ -4,10 +4,31 @@ export component MainWindow inherits Window {
 	in property <bool> clock_active: false;
 	in property <string> time;
 
+	// Window
+	in property <color> window_color: rgba(0,0,0,0.0);
+
+	// Active
+	in property <int> font_weight_active: 600;
+	in property <color> font_color_active: white;
+	in property <string> font_active;
+	// Inactive
+	in property <int> font_weight_inactive: 600;
+	in property <color> font_color_inactive: rgba(186, 187, 241, 0.5);
+	in property <string> font_inactive;
+	
+	title: "hyprclock";
+
+	Rectangle {
+		width: 100%;
+		height: 100%;
+		background: window_color;
+	}
+
 	clock := Text {
 		text: time;
-		font-weight: 600;
-		color: timer.running ? white : rgba(186, 187, 241, 0.5);
+		font-weight: timer.running ? font_weight_active : font_weight_inactive;
+		font-family: timer.running? font_active : font_inactive;
+		color: timer.running ? font_color_active : font_color_inactive;
 
 		animate color {
 			duration: 750ms;
@@ -24,4 +45,5 @@ export component MainWindow inherits Window {
 			parent.clock_update();
 		}
 	}
+
 }
