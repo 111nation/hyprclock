@@ -34,15 +34,15 @@ Configuration takes place in .toml form
 
 ```toml
 [window]
-color = "rgba(0, 0, 0, 0.8)
+color = "rgba(0, 0, 0, 0.8)"
 
 [font.active]
 weight = 700
 name = "Montserrat"
-color = white
+color = "white"
 
 [font.inactive]
-color = red
+color = "red"
 ```
 
 
