@@ -35,6 +35,10 @@ _Make sure you have the Rust language properly installed_
 
 On any operating system, enter the project root and execute
 
+```bash
+cargo run
+```
+
 ## Configuration
 All configurations are either stored in `$XDG_CONFIG_HOME/hypr/hyprclock.conf` or `~/.config/hypr/hyprclock.conf`, the clock app also accepts the `.toml` counterpart!
 
@@ -51,9 +55,4 @@ color = "white"
 
 [font.inactive]
 color = "red"
-```
-
-
-```bash
-cargo run
 ```
