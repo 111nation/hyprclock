@@ -1,11 +1,16 @@
 # Hyprclock
-_An up-and-coming clock widget to complement your desktop aesthetic_
+_An up-and-coming clock widget to complement your desktop aesthetic <3_
 
 > [!Note] 
 > This is a hyprland first project! It works best using window managers on linux!
 > Still cross platform support has been implemented!
 
 ## Project News
+13 05 2025:
+    <p>
+    We have updated the clock to support new configurations. More configurable options yet to come! Stay tuned because docs on this application are to be released in the for-seeable future! :) <3
+    </p>
+
 11 05 2025:
     <p>
     Happy Mother's day!
