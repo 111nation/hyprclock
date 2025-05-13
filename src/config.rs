@@ -13,21 +13,23 @@ struct Config {
 }
 
 #[derive(Deserialize, Debug)]
-struct Font {
-    active: FontStyle,
-    inactive: FontStyle,
-}
-
-#[derive(Deserialize, Debug)]
-struct FontStyle {
-    name: String,
-    color: String,
-    weight: i32,
-}
-
-#[derive(Deserialize, Debug)]
 struct Window {
     color: String,
+    border: Border,
+}
+
+#[derive(Deserialize, Debug)]
+struct Border {
+    color: String,
+    width: f32,
+    radius: f32,
+}
+
+#[derive(Deserialize, Debug)]
+struct Font {
+	color: String,
+	weight: i32,
+	family: String,
 }
 
 pub fn load_config(window: &MainWindow) -> bool {
@@ -40,19 +42,17 @@ pub fn load_config(window: &MainWindow) -> bool {
         },
     };
 
-    // Set configurations
+    // Window config
     window.set_window_color(get_color(&config.window.color));
+    window.set_border_color(get_color(&config.window.border.color));
+    window.set_border_width(config.window.border.width);
+    window.set_border_radius(config.window.border.radius);
 
-    // FONTS
-    // Active
-    window.set_font_weight_active(config.font.active.weight);
-    window.set_font_color_active(get_color(&config.font.active.color));
-    window.set_font_active(config.font.active.name.into());
-    // Inactive
-
-    window.set_font_weight_inactive(config.font.inactive.weight);
-    window.set_font_color_inactive(get_color(&config.font.inactive.color));
-    window.set_font_active(config.font.inactive.name.into());
+    // Font config
+    window.set_font_family(config.font.family.into());
+    window.set_font_color(get_color(&config.font.color));
+    window.set_font_weight(config.font.weight);
+    
 
     true
 }
@@ -96,8 +96,8 @@ fn get_config_struct() -> Result<Config, String> {
 
     let config: Config = match toml::from_str(&buffer) {
         Ok(dat) => dat,
-        Err(_) => {
-            return Err("Error loading config file contents!".into());
+        Err(e) => {
+            return Err(format!("{}", e));
         },
     };
 
