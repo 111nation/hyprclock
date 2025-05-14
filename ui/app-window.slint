@@ -11,9 +11,18 @@ export component MainWindow inherits Window {
 	in property <length> border_radius: 0px;
 
 	// Font
+	in property <bool> font_italic: false;
 	in property <color> font_color: white;
 	in property <int> font_weight: 600;
 	in property <string> font_family;
+	in property <float> font_size: 1;
+	in property <length> font_spacing: 0px;
+	// Font stroke
+	in property <color> font_stroke_color: #8aadf4ee;
+	in property <length> font_stroke_width: 0px;
+
+	// Clock
+	in-out property <string> end_sound: "notification.mp3";
 
 	
 	title: "hyprclock";
@@ -32,16 +41,26 @@ export component MainWindow inherits Window {
 	
 	clock := Text {
 		text: time;
-		font-weight: font_weight;
-		font-family: font_family;
+		
+		// General
 		color: font_color;
+		font-weight: font_weight;
+		font-italic: font_italic;
+		font-family: font_family;
+		font-size: (parent.width*0.85)*(min(1, font_size)*0.25);
+		letter-spacing: font_spacing;
+		
+		// Strokes
+		stroke: font_stroke_color;
+		stroke-width: min(font_stroke_width, 5px);
+		stroke-style: outside;
+
 
 		animate color {
 			duration: 750ms;
 			easing: ease-out;
 		}
 
-		font-size: (parent.width*0.85)*0.25;
 	}
 
 	timer := Timer {

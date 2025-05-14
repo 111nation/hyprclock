@@ -35,13 +35,14 @@ fn start_timer(window: &MainWindow, duration: &NaiveTime) {
 
     window.on_clock_update(move || {
         win.set_time(time_to_string_naive(&timer).into());
+            let sound= win.get_end_sound().to_string();
         
         // Stop timer when reaching 00:00:00 
         if timer == NaiveTime::default() {
             win.set_clock_active(false);
             // Play notification sound
             std::thread::spawn(|| {
-                if !play_sound("notification.mp3") {
+                if !play_sound(sound) {
                     println!("Failed to play sound!");
                 }
             });
@@ -80,7 +81,7 @@ fn time_to_string_naive(time: &NaiveTime) -> String {
     format!("{}", time.format("%H:%M:%S"))
 }
 
-fn play_sound(file_location: &str) -> bool {
+fn play_sound(file_location: String) -> bool {
     use std::fs::File;
     use std::io::BufReader;
     use rodio::{Decoder, OutputStream, Sink};

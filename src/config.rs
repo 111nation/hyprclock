@@ -8,8 +8,19 @@ use csscolorparser;
 
 #[derive(Deserialize, Debug)]
 struct Config {
+    clock: Clock,
     window: Window,
     font: Font,
+}
+
+#[derive(Deserialize, Debug)]
+struct Clock {
+    sound: Sound,
+}
+
+#[derive(Deserialize, Debug)]
+struct Sound {
+    end: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -30,6 +41,16 @@ struct Font {
 	color: String,
 	weight: i32,
 	family: String,
+    italic: bool,
+    size: f32,
+    spacing: f32,
+    stroke: Stroke,
+}
+
+#[derive(Deserialize, Debug)]
+struct Stroke {
+    color: String,
+    width: f32,
 }
 
 pub fn load_config(window: &MainWindow) -> bool {
@@ -48,11 +69,19 @@ pub fn load_config(window: &MainWindow) -> bool {
     window.set_border_width(config.window.border.width);
     window.set_border_radius(config.window.border.radius);
 
+    // Clock config
+    window.set_end_sound(config.clock.sound.end.into());
+
     // Font config
     window.set_font_family(config.font.family.into());
     window.set_font_color(get_color(&config.font.color));
     window.set_font_weight(config.font.weight);
-    
+    window.set_font_italic(config.font.italic);
+    window.set_font_size(config.font.size);
+    window.set_font_spacing(config.font.spacing);
+    // Strokes
+    window.set_font_stroke_width(config.font.stroke.width);
+    window.set_font_stroke_color(get_color(&config.font.stroke.color)); 
 
     true
 }
