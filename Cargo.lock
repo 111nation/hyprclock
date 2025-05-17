@@ -4647,6 +4647,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "csscolorparser",
+ "i-slint-backend-winit",
  "libc",
  "notify-rust",
  "rodio",

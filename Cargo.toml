@@ -13,6 +13,7 @@ notify-rust = "4.11.7"
 rodio = "0.20.1"
 serde = { version = "1.0.219", features = ["derive"] }
 slint = "1.8.0"
+i-slint-backend-winit = "1.8.0"
 toml = "0.8.22"
 
 [build-dependencies]
