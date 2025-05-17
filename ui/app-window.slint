@@ -9,6 +9,8 @@ export component MainWindow inherits Window {
 	in property <color> border_color: rgba(0,0,0,0.0);
 	in property <length> border_width: 0px;
 	in property <length> border_radius: 0px;
+    in property <length> window_width: 0px;
+    in property <length> window_height: 0px;
 
 	// Font
 	in property <bool> font_italic: false;
@@ -29,6 +31,9 @@ export component MainWindow inherits Window {
 
 	
 	title: "hyprclock";
+    width: window_width;
+    height: window_height;
+    background: transparent;
 
 	Rectangle {
 		width: parent.width;

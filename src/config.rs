@@ -1,7 +1,11 @@
 use serde::Deserialize;
 use std::fs::File;
+
 use std::fs::OpenOptions;
+
+#[cfg(unix)]
 use std::os::unix::fs::OpenOptionsExt;
+
 use std::io::prelude::*;
 use crate::MainWindow; // Use the main window in the main file
 use csscolorparser;
@@ -40,6 +44,10 @@ struct Window {
     color: String,
     #[serde(default)]
     border: Border,
+    #[serde(default)]
+    width: f32,
+    #[serde(default)]
+    height: f32,
 }
 
 #[derive(Deserialize, Debug, Default)]
@@ -78,6 +86,7 @@ struct Stroke {
     width: f32,
 }
 
+
 pub fn load_config(window: &MainWindow) -> bool {
     // Loads clock and styles configuration
     // military indicates if 24hour or 12 hour format must be used for clock
@@ -95,6 +104,8 @@ pub fn load_config(window: &MainWindow) -> bool {
     window.set_border_color(get_color(&config.window.border.color));
     window.set_border_width(config.window.border.width);
     window.set_border_radius(config.window.border.radius);
+    window.set_window_width(config.window.width);
+    window.set_window_height(config.window.height);
 
     // Clock config
     window.set_tick_sound(config.clock.sound.tick.into());
@@ -167,11 +178,13 @@ fn get_default_config() -> Result<File, String> {
     // Attempts to load default config file 
     // stored at $XDG_CONFIG_HOME/hyprclock/
     // or fallback to $HOME/.config/hyprclock/
+    // on windows try %programdata% or %appdata%
     // Does not create the directories if not found
     //
     // Attemps to load .toml counterpart otherwise .conf used
     use std::env;
 
+    #[cfg(unix)]
     // Try load $XDG_CONFIG_HOME otherwise try load $HOME/.config
     // TODO: Fix this!!!!
     let config_home = match env::var("XDG_CONFIG_HOME") {
@@ -184,7 +197,33 @@ fn get_default_config() -> Result<File, String> {
         },
     };
 
+    #[cfg(windows)]
+    let config_home = match env::var("programdata") {
+        Ok(dat) => dat,
+        Err(_) => {
+           match env::var("appdata") {
+                Ok(dat) => dat + "/.config",
+                Err(_) => return Err("Could not get configuration home!".into()),
+           }
+        },
+    };
+
     let config_home = config_home + "/hypr";
+
+    // Try create directory if config direction doesnt exist
+    match std::fs::exists(config_home.clone()) {
+        Ok(exists) => {
+            if !exists {
+               let _ = std::fs::create_dir_all(config_home.clone());
+                // Create configuration file
+                let _ = File::create(config_home.clone() + "/hyprclock.toml");
+            }
+
+        },
+        Err(_) => {
+            println!("Attempted to find config directory, but failed!"); 
+        }
+    }
 
     // Try load the .toml config first otherwise the .conf file
     // Attempt to force open even though other programs
@@ -201,11 +240,20 @@ fn get_default_config() -> Result<File, String> {
 }
 
 fn open_read_mode(file_name: String) -> Result<File, String> {
-    match OpenOptions::new()
+    #[cfg(windows)]
+    return match OpenOptions::new()
+        .read(true)
+        .open(file_name) {
+         Ok(dat) => Ok(dat),
+         Err(_) => Err("Failed to open configuration file!".into()),
+    };
+
+    #[cfg(unix)]
+    return match OpenOptions::new()
         .read(true)
         .custom_flags(libc::O_NONBLOCK)
         .open(file_name) {
          Ok(dat) => Ok(dat),
          Err(_) => Err("Failed to open configuration file!".into()),
-    }
+    };
 }
