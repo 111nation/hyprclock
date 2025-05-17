@@ -6,6 +6,13 @@ _An up-and-coming clock widget to complement your desktop aesthetic <3_
 > Still cross platform support has been implemented!
 
 ## Project News
+16 05 2025:
+    <p>
+    Hope you having a great day <3, configuration of the clock is finished!!!! This project is near completion
+    Now it is time to optimize and update for other operating systems. 
+    TODO: Make clock display version number, and test and configure for windows
+    </p>
+
 13 05 2025:
     <p>
     We have updated the clock to support new configurations. More configurable options yet to come! Stay tuned because docs on this application are to be released in the for-seeable future! :) <3

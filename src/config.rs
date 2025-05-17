@@ -6,55 +6,82 @@ use std::io::prelude::*;
 use crate::MainWindow; // Use the main window in the main file
 use csscolorparser;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct Config {
+    #[serde(default)]
     clock: Clock,
+    #[serde(default)]
     window: Window,
+    #[serde(default)]
     font: Font,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct Clock {
+    #[serde(default)]
     sound: Sound,
+    #[serde(default)]
+    military: bool,
+    #[serde(default)]
+    truncate: bool,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct Sound {
+    #[serde(default)]
+    tick: String,
+    #[serde(default)]
     end: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct Window {
+    #[serde(default)]
     color: String,
+    #[serde(default)]
     border: Border,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct Border {
+    #[serde(default)]
     color: String,
+    #[serde(default)]
     width: f32,
+    #[serde(default)]
     radius: f32,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct Font {
+    #[serde(default)]
 	color: String,
+    #[serde(default)]
 	weight: i32,
+    #[serde(default)]
 	family: String,
+    #[serde(default)]
     italic: bool,
+    #[serde(default)]
     size: f32,
+    #[serde(default)]
     spacing: f32,
+    #[serde(default)]
     stroke: Stroke,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 struct Stroke {
+    #[serde(default)]
     color: String,
+    #[serde(default)]
     width: f32,
 }
 
 pub fn load_config(window: &MainWindow) -> bool {
     // Loads clock and styles configuration
+    // military indicates if 24hour or 12 hour format must be used for clock
+    // truncate indicates if unecissary zeros must be scrapped 00:00:20 -> 20
     let config = match get_config_struct() {
         Ok(dat) => dat,
         Err(err) => {
@@ -70,7 +97,10 @@ pub fn load_config(window: &MainWindow) -> bool {
     window.set_border_radius(config.window.border.radius);
 
     // Clock config
+    window.set_tick_sound(config.clock.sound.tick.into());
     window.set_end_sound(config.clock.sound.end.into());
+    window.set_military(config.clock.military); 
+    window.set_truncate(config.clock.truncate);
 
     // Font config
     window.set_font_family(config.font.family.into());
@@ -81,7 +111,7 @@ pub fn load_config(window: &MainWindow) -> bool {
     window.set_font_spacing(config.font.spacing);
     // Strokes
     window.set_font_stroke_width(config.font.stroke.width);
-    window.set_font_stroke_color(get_color(&config.font.stroke.color)); 
+    window.set_font_stroke_color(get_color(&config.font.stroke.color));     
 
     true
 }

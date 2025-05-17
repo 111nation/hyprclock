@@ -2,7 +2,7 @@ export component MainWindow inherits Window {
 	callback clock_update;
 	
 	in property <bool> clock_active: false;
-	in property <string> time;
+	in property <string> time: "";
 
 	// Window
 	in property <color> window_color: rgba(0,0,0,0.0);
@@ -14,8 +14,8 @@ export component MainWindow inherits Window {
 	in property <bool> font_italic: false;
 	in property <color> font_color: white;
 	in property <int> font_weight: 600;
-	in property <string> font_family;
-	in property <float> font_size: 1;
+	in property <string> font_family: "";
+	in property <float> font_size: 0.8;
 	in property <length> font_spacing: 0px;
 	// Font stroke
 	in property <color> font_stroke_color: #8aadf4ee;
@@ -23,6 +23,9 @@ export component MainWindow inherits Window {
 
 	// Clock
 	in-out property <string> end_sound: "notification.mp3";
+	in-out property <string> tick_sound: "";
+	in-out property <bool> military: true;
+	in-out property <bool> truncate: false;
 
 	
 	title: "hyprclock";

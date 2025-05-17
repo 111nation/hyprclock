@@ -4,7 +4,7 @@ mod args;
 mod config;
 
 use args::*;
-use chrono::{prelude::*, NaiveTime, TimeDelta, DateTime};
+use chrono::{ prelude::*, DateTime, NaiveTime, TimeDelta};
 use config::load_config;
 
 slint::include_modules!();
@@ -31,11 +31,13 @@ fn start_timer(window: &MainWindow, duration: &NaiveTime) {
     let win = window.as_weak().unwrap();
     let mut timer = duration.clone();
 
-    window.set_time(time_to_string_naive(&timer).into());
+    window.set_time(time_to_string_naive(&timer, win.get_truncate()).into());
 
     window.on_clock_update(move || {
-        win.set_time(time_to_string_naive(&timer).into());
-            let sound= win.get_end_sound().to_string();
+        let sound= win.get_end_sound().to_string();
+        let tick = win.get_tick_sound().to_string();
+        std::thread::spawn(||{ play_sound(tick) });
+        win.set_time(time_to_string_naive(&timer, win.get_truncate()).into());
         
         // Stop timer when reaching 00:00:00 
         if timer == NaiveTime::default() {
@@ -63,21 +65,34 @@ fn current_time(window: &MainWindow) {
     let win = window.as_weak().unwrap();
     let mut time: DateTime<Utc> = Utc::now();
 
-    window.set_time(time_to_string(&time).into());
+    window.set_time(time_to_string(&time, win.get_military()).into());
 
     window.on_clock_update(move || {
+        let tick = win.get_tick_sound().to_string();
         // Display time
-        win.set_time(time_to_string(&time).into());
+        win.set_time(time_to_string(&time, win.get_military()).into());
+        std::thread::spawn(||{ play_sound(tick) });
         time = Utc::now();
     });
-
 }
 
-fn time_to_string(time: &DateTime<Utc>) -> String {
-    format!("{}", time.format("%H:%M:%S"))
+fn time_to_string(time: &DateTime<Utc>, military: bool) -> String {
+    if military {
+        return format!("{}", time.format("%H:%M:%S"));
+    }
+
+    format!("{}", time.format("%I:%M:%S%P"))
 }
 
-fn time_to_string_naive(time: &NaiveTime) -> String {
+fn time_to_string_naive(time: &NaiveTime, truncate: bool) -> String {
+    if truncate == true {
+        let hour: String = if time.hour() > 0 { "%H:".into() } else { "".into() };
+        let minute: String = if time.minute() > 0 || hour != "" { "%M:".into() } else { "".into() };
+        let formating: String = format!("{hour}{minute}%S");
+        
+        return format!("{}", time.format(formating.as_str()));
+    }
+
     format!("{}", time.format("%H:%M:%S"))
 }
 

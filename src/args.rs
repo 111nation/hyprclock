@@ -172,6 +172,24 @@ fn print_help() {
 
       -h, --help             Show this help message
 
+    Customization:
+    - Configure appearance via: $XDG_CONFIG_HOME/hypr/hyprclock.toml
+      (Fallback: $HOME/.config/hypr/hyprclock.toml)
+
+    Configurable Features:
+      • Clock:
+          • 12h/24h display (military)
+          • Truncate zeros (e.g., 00:00:05 → 5)
+          • Custom tick and end sounds
+
+      • Font:
+          • Font family, weight, size, spacing, italic
+          • Stroke outline: color and width
+
+      • Window:
+          • Background color
+          • Border color, width, and radius
+
     Notes:
     - If no command is given, hyprclock defaults to showing the current time.
     - Timer defaults to 25 minutes if no arguments are passed after --timer.
