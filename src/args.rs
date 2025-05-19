@@ -33,13 +33,60 @@ pub fn get_command(timer: &mut NaiveTime) -> Command {
         }
             
         return Timer;
+
     } else if command == "--help" || command == "-h" {
         print_help();
         return Nothing;
+
+    } else if command == "--config" || command == "-c" {
+        if !open_config() {
+            println!("Failed to load configuration file!");
+            return Error;
+        }
+        
+        return Nothing;
+
     }
 
     println!("Invalid command!");
     Error
+}
+
+fn open_config() -> bool {
+    // Allows user to easily open configuration file using 
+    // operating systems default editor
+    let config_home = match crate::config::get_config_home() {
+        Ok(dat) => dat,
+        Err(_) => return false,
+    };
+    
+    // Test if hyprclock.conf exists
+    // Otherwise open hyprclock.toml (default)
+
+    let file = match std::fs::exists(config_home.clone() + "/hyprclock.conf") {
+        Ok(exist) => {
+            if exist {
+                config_home + "/hyprclock.conf"
+            } else {
+                config_home + "/hyprclock.toml"
+            }
+        }
+
+        Err(_) => return false,
+    };
+
+    open_editor(&file)
+}
+
+fn open_editor(file: &String) -> bool {
+    use std::process::Command;
+
+    #[cfg(windows)]
+    match Command::new("notepad").args([file]).spawn() {
+        Ok(_) => return true,
+        Err(_) => return false,
+    };
+
 }
 
 fn init_timer(args: &Vec<String>, timer: &mut NaiveTime) -> bool {

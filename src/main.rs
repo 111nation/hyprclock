@@ -34,14 +34,13 @@ fn start_timer(window: &MainWindow, duration: &NaiveTime) {
     window.set_time(time_to_string_naive(&timer, win.get_truncate()).into());
 
     window.on_clock_update(move || {
+        // Sounds
         let sound= win.get_end_sound().to_string();
         let tick = win.get_tick_sound().to_string();
         std::thread::spawn(||{ play_sound(tick) });
-        win.set_time(time_to_string_naive(&timer, win.get_truncate()).into());
-        
+       
         // Stop timer when reaching 00:00:00 
         if timer == NaiveTime::default() {
-            win.set_clock_active(false);
             // Play notification sound
             std::thread::spawn(|| {
                 if !play_sound(sound) {
@@ -52,10 +51,14 @@ fn start_timer(window: &MainWindow, duration: &NaiveTime) {
             if !notification("hyprclock", "Timer complete!", 5000) {
                 println!("Failed to display notification!");
             }
+
+            win.set_clock_active(false);
+            return;
         }
 
         // Decrements time by 1 second
         (timer, _) = timer.overflowing_sub_signed(TimeDelta::try_seconds(1).unwrap());
+        win.set_time(time_to_string_naive(&timer, win.get_truncate()).into());
     });
 }
 
@@ -86,9 +89,9 @@ fn time_to_string(time: &DateTime<Utc>, military: bool) -> String {
 
 fn time_to_string_naive(time: &NaiveTime, truncate: bool) -> String {
     if truncate == true {
-        let hour: String = if time.hour() > 0 { "%H:".into() } else { "".into() };
-        let minute: String = if time.minute() > 0 || hour != "" { "%M:".into() } else { "".into() };
-        let formating: String = format!("{hour}{minute}%S");
+        let hour: &str = if time.hour() > 0 { "%H:".into() } else { "".into() };
+        let minute: &str = if time.minute() > 0 || !hour.is_empty() { "%M:".into() } else { "".into() };
+        let formating = format!("{hour}{minute}%S");
         
         return format!("{}", time.format(formating.as_str()));
     }

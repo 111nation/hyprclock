@@ -190,6 +190,27 @@ fn get_default_config() -> Result<File, String> {
     // Does not create the directories if not found
     //
     // Attemps to load .toml counterpart otherwise .conf used
+
+    let config_home = match get_config_home() {
+        Ok(dat) => dat,
+        Err(err) => return Err(err),
+    };
+
+    // Try load the .toml config first otherwise the .conf file
+    // Attempt to force open even though other programs
+    match open_read_mode(config_home.clone() + "/hyprclock.toml") {
+        Ok(dat) => return Ok(dat),
+        _ => (),
+    };
+
+
+    match open_read_mode(config_home.clone() + "/hyprclock.conf") {
+        Ok(dat) => return Ok(dat),
+        _ => return Err("Could not locate configuration file!".into()),
+    };
+}
+
+pub fn get_config_home () -> Result<String, String> {
     use std::env;
 
     #[cfg(unix)]
@@ -229,22 +250,11 @@ fn get_default_config() -> Result<File, String> {
 
         },
         Err(_) => {
-            println!("Attempted to find config directory, but failed!"); 
+            return Err("Attempted to find config directory, but failed!".into()); 
         }
     }
 
-    // Try load the .toml config first otherwise the .conf file
-    // Attempt to force open even though other programs
-    match open_read_mode(config_home.clone() + "/hyprclock.toml") {
-        Ok(dat) => return Ok(dat),
-        _ => (),
-    };
-
-
-    match open_read_mode(config_home.clone() + "/hyprclock.conf") {
-        Ok(dat) => return Ok(dat),
-        _ => return Err("Could not locate configuration file!".into()),
-    };
+    Ok(config_home)
 }
 
 fn open_read_mode(file_name: String) -> Result<File, String> {

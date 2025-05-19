@@ -31,12 +31,16 @@ export component MainWindow inherits Window {
 
 	
 	title: "hyprclock";
-    width: window_width;
-    height: window_height;
+    preferred-width: window_width;
+    preferred-height: window_height;
+    always-on-top: true;
+    background: window_color;
 
 	Rectangle {
 		width: parent.width;
 		height: parent.height;
+        x: parent.x;
+        y: parent.y;
 		clip: true;
 
 		background: window_color;
@@ -77,5 +81,4 @@ export component MainWindow inherits Window {
 			parent.clock_update();
 		}
 	}
-
 }

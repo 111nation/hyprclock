@@ -6,6 +6,11 @@ _An up-and-coming clock widget to complement your desktop aesthetic <3_
 > Still cross platform support has been implemented!
 
 ## Project News
+19 05 2025:
+    <p>
+        For windows users we added a neat feature for you to open your configuration file using the -c file. It will open notepad. No more struggling to look for your configuration!
+    </P>
+
 16 05 2025:
     <p>
     Hope you having a great day <3, configuration of the clock is finished!!!! This project is near completion
