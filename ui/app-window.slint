@@ -62,8 +62,8 @@ export component MainWindow inherits Window {
 		letter-spacing: font_spacing;
 		
 		// Strokes
-		stroke: font_stroke_color;
-		stroke-width: min(font_stroke_width, 5px);
+		stroke: font_stroke_width != 0 ? font_stroke_color : rgba(0,0,0);
+		stroke-width: font_stroke_width != 0 ? min(font_stroke_width, 5px) : 0;
 		stroke-style: outside;
 
 
