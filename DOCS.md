@@ -31,22 +31,34 @@ Config file location:
 ### Basic Config
 ```toml
 [clock]
-military = false  # 24h format
-truncate = false  # Remove leading zeros
+military = false     # Use 24-hour time format instead of 12-hour
+truncate = false     # Remove leading zeros (e.g., 01:30:00 becomes 1:30:00)
 
 [clock.sound]
-tick = "tick.mp3"
-end = "notification.mp3"
+tick = "tick.mp3"    # Sound file played on each clock tick
+end = "notification.mp3"  # Sound file played when timer completes
 
 [window]
-color = "#000000"
-width = 300.0
-height = 100.0
+color = "#000000"    # Background color of the window (hex color)
+width = 300.0        # Window width in pixels
+height = 100.0       # Window height in pixels
+
+[window.border]
+color = "#ffffff"    # Border color (hex color)
+width = 1.0          # Border width in pixels
+radius = 5.0         # Border corner radius in pixels
 
 [font]
-color = "#ffffff"
-size = 24.0
-family = "Arial"
+color = "#ffffff"    # Text color (hex color)
+weight = 400         # Font weight (100-900, 400 is normal)
+family = "Arial"     # Font family name
+italic = false       # Enable/disable italic style
+size = 24.0          # Font size in pixels
+spacing = 0.0        # Letter spacing in pixels
+
+[font.stroke]
+color = "#000000"    # Text outline color (hex color)
+width = 0.0          # Text outline width in pixels
 ```
 
 ## Commands
