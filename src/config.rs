@@ -235,9 +235,17 @@ pub fn get_config_home () -> Result<String, String> {
     match std::fs::exists(config_home.clone()) {
         Ok(exists) => {
             if !exists {
-               let _ = std::fs::create_dir_all(config_home.clone());
+                let _ = std::fs::create_dir_all(config_home.clone());
+
                 // Create configuration file
-                let _ = File::create(config_home.clone() + "/hyprclock.toml");
+                let mut file = match File::create(config_home.clone() + "/hyprclock.toml") {
+                    Ok(dat) => dat,
+                    Err(_) => return Err("Failed to create default configuration".into()),
+                };
+
+                if !populate_default_config(&mut file) {
+                    return Err("Could not provide default configuration options".into());
+                }
             }
 
         },
@@ -247,6 +255,45 @@ pub fn get_config_home () -> Result<String, String> {
     }
 
     Ok(config_home)
+}
+
+fn populate_default_config (file: &mut File) -> bool {
+    // False - Unsuccessful operation
+    // True - Successful operation
+    let data = r#"
+        [clock]
+        military = true
+        truncate = true
+
+        [clock.sound]
+        end = "/home/tafara/Projects/hyprclock/notification.mp3"
+        tick = "/home/tafara/Projects/hyprclock/tick.mp3"
+
+        [window]
+        color = "rgba(0,0,0,0.7)"
+
+        [window.border]
+        width = 0
+        radius = 0
+        color = ""
+
+        [font]
+        color = "green"
+        weight = 300
+        family = "Courier New"
+        italic = false
+        size=0.50
+        spacing=1
+
+        [font.stroke]
+        color = "rgba(0,0,0,0)"
+        width = 0
+    "#;
+
+    match file.write_all(data.as_bytes()) {
+        Ok(_) => return true,
+        Err(_) => return false,
+    }
 }
 
 fn open_read_mode(file_name: String) -> Result<File, String> {

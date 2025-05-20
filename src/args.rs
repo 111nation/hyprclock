@@ -47,6 +47,8 @@ pub fn get_command(timer: &mut NaiveTime) -> Command {
             None => "",
         };
 
+        let _ = crate::config::get_config_home();
+
         if !open_config(editor) {
             println!("Failed to open configuration with editor '{}'!", editor);
             return Error;

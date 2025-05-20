@@ -2207,6 +2207,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "62adaabb884c94955b19907d60019f4e145d091c75345379e70d1ee696f7854f"
 
 [[package]]
+name = "hyprclock"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "csscolorparser",
+ "libc",
+ "notify-rust",
+ "rodio",
+ "serde",
+ "slint",
+ "slint-build",
+ "toml",
+]
+
+[[package]]
 name = "i-slint-backend-linuxkms"
 version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4612,21 +4627,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "spin_on",
-]
-
-[[package]]
-name = "slint-rust-template"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "csscolorparser",
- "libc",
- "notify-rust",
- "rodio",
- "serde",
- "slint",
- "slint-build",
- "toml",
 ]
 
 [[package]]
