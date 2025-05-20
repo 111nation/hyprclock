@@ -20,19 +20,3 @@ cargo run
 
 ## Documentation & Configuration
 [DOCS](./DOCS.md)
-All configurations are either stored in `$XDG_CONFIG_HOME/hypr/hyprclock.conf` or `~/.config/hypr/hyprclock.conf`, the clock app also accepts the `.toml` counterpart!
-
-Configuration takes place in .toml form
-
-```toml
-[window]
-color = "rgba(0, 0, 0, 0.8)"
-
-[font.active]
-weight = 700
-name = "Montserrat"
-color = "white"
-
-[font.inactive]
-color = "red"
-```
