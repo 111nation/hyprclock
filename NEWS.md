@@ -1,4 +1,10 @@
 ## Project News
+20 05 2025:
+    <p>
+    Yay! Version 0.1.0, the application is finally complete, you are able to use the -c flag to open your config file easily, on any operating system!
+    We also updated the repository to accomidate NEWS.md and DOCS.md! Thank you for so much of your support!
+    </p>
+
 19 05 2025:
     <p>
     For windows users we added a neat feature for you to open your configuration file using the -c file. It will open notepad. No more struggling to look for your configuration!
