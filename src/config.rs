@@ -107,14 +107,6 @@ pub fn load_config(window: &MainWindow) -> bool {
     window.set_window_width(config.window.width);
     window.set_window_height(config.window.height);
     
-    // Make window blurry on windows 
-    #[cfg(windows)]
-    /*
-    window.into().window().with_winit_window(|winit_win: &i_slint_backend_winit::winit::window::Window| {
-        winit_win.set_system_backdrop(TransientWindow);
-    });
-    */
-
     // Clock config
     window.set_tick_sound(config.clock.sound.tick.into());
     window.set_end_sound(config.clock.sound.end.into());

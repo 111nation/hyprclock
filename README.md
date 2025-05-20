@@ -1,4 +1,4 @@
-# Hyprclock
+# hyprclock
 _An up-and-coming clock widget to complement your desktop aesthetic <3_
 
 > [!Note] 
@@ -8,7 +8,7 @@ _An up-and-coming clock widget to complement your desktop aesthetic <3_
 ## Project News
 19 05 2025:
     <p>
-        For windows users we added a neat feature for you to open your configuration file using the -c file. It will open notepad. No more struggling to look for your configuration!
+    For windows users we added a neat feature for you to open your configuration file using the -c file. It will open notepad. No more struggling to look for your configuration!
     </P>
 
 16 05 2025:

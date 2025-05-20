@@ -9,6 +9,8 @@ pub enum Command {
     Timer,
 }
 
+const VERSION: &str = "0.1.0";
+
 pub fn get_command(timer: &mut NaiveTime) -> Command {
     // Returns state code if successful clock initialization
     // Parameter returns the time data needed to start the clock
@@ -39,20 +41,30 @@ pub fn get_command(timer: &mut NaiveTime) -> Command {
         return Nothing;
 
     } else if command == "--config" || command == "-c" {
-        if !open_config() {
-            println!("Failed to load configuration file!");
+        // Grab editor as a second command or "" for no editor
+        let editor: &str = match args.get(2) {
+            Some(dat) => dat,
+            None => "",
+        };
+
+        if !open_config(editor) {
+            println!("Failed to open configuration with editor '{}'!", editor);
             return Error;
         }
         
         return Nothing;
 
+    } else if command == "--version" || command == "-v" {
+        println!("hyprclock version: {VERSION}");
+
+        return Nothing;
     }
 
     println!("Invalid command!");
     Error
 }
 
-fn open_config() -> bool {
+fn open_config(editor: &str) -> bool {
     // Allows user to easily open configuration file using 
     // operating systems default editor
     let config_home = match crate::config::get_config_home() {
@@ -75,18 +87,41 @@ fn open_config() -> bool {
         Err(_) => return false,
     };
 
-    open_editor(&file)
+    open_editor(&file, &editor)
 }
 
-fn open_editor(file: &String) -> bool {
+fn open_editor(file: &String, editor: &str) -> bool {
     use std::process::Command;
 
-    #[cfg(windows)]
-    match Command::new("notepad").args([file]).spawn() {
+    // Stores the editor which we will evoke a process from
+    let editor= get_editor(editor);
+
+    match Command::new(editor).args([file])
+        .status() {
         Ok(_) => return true,
         Err(_) => return false,
     };
 
+}
+fn get_editor(editor: &str) -> String {
+    // If user already selected an editor, just use that
+    if !editor.is_empty() { 
+        return editor.into();
+    }
+
+    // Open OS default editors 
+
+    #[cfg(windows)]
+    return "notepad".into();
+
+    #[cfg(target_os = "macos")]
+    return "TextEdit".into();
+
+    #[cfg(target_os = "linux")]
+    match env::var("EDITOR") {
+        Ok(dat) => return dat,
+        Err(_) => return "xdg-open".into(),
+    }
 }
 
 fn init_timer(args: &Vec<String>, timer: &mut NaiveTime) -> bool {
@@ -204,48 +239,50 @@ fn extract_magnitude_and_unit(arg: &String) -> Result<(u8, &str), &str> {
 
 fn print_help() {
     println!("{}", r#"
-    hyprclock - A Minimalist Time Utility
-    =====================================
+        hyprclock - A Minimalist Time Utility
+        =====================================
 
-    Usage:
-      hyprclock [OPTIONS]
+        Usage:
+          hyprclock [OPTIONS]
 
-    Options:
-      -n, --now              Show the current time
-      -t, --timer [ARGS]     Start a countdown timer
-                             Format: <value><unit> [<value><unit>] ...
-                             Units: h/hour, m/min, s/sec
-                             Example: hyprclock --timer 1h 30min 10s
+        Options:
+          -n, --now              Show the current time
+          -t, --timer [ARGS]     Start a countdown timer
+                                 Format: <value><unit> [<value><unit>] ...
+                                 Units: h/hour, m/min, s/sec
+                                 Example: hyprclock --timer 1h 30min 10s
 
-      -h, --help             Show this help message
+          -c, --config [EDITOR]  Open configuration file in the specified editor.
+                                 If no editor is given, a default will be used:
+                                   Linux → $EDITOR or xdg-open
+                                   Windows → notepad
+                                   macOS → TextEdit
+                                 Example: hyprclock --config nano
 
-    Customization:
-    - Configure appearance via: $XDG_CONFIG_HOME/hypr/hyprclock.toml
-      (Fallback: $HOME/.config/hypr/hyprclock.toml)
+          -v, --version          Show version information
+          -h, --help             Show this help message
 
-    Configurable Features:
-      • Clock:
-          • 12h/24h display (military)
-          • Truncate zeros (e.g., 00:00:05 → 5)
-          • Custom tick and end sounds
+        Customization:
+        - Configuration file location depends on your system:
+            • Linux/macOS → $XDG_CONFIG_HOME/hypr/hyprclock.toml  
+                           (fallback: $HOME/.config/hypr/hyprclock.toml)
+            • Windows     → %ProgramData%\hypr\hyprclock.toml
 
-      • Font:
-          • Font family, weight, size, spacing, italic
-          • Stroke outline: color and width
+        - You can also use a `.conf` file instead: `hyprclock.conf` in the same folder.
 
-      • Window:
-          • Background color
-          • Border color, width, and radius
+        Configurable Features:
+        - Refer to the README.md at https://github.com/111nation/hyprclock
 
-    Notes:
-    - If no command is given, hyprclock defaults to showing the current time.
-    - Timer defaults to 25 minutes if no arguments are passed after --timer.
-    - Maximum supported time is 23h 59m 59s.
+        Notes:
+        - If no command is given, hyprclock defaults to showing the current time.
+        - Timer defaults to 25 minutes if no arguments are passed after --timer.
+        - Maximum supported time is 23h 59m 59s.
 
-    Examples:
-      hyprclock --now
-      hyprclock -t 10min
-      hyprclock --timer 1h 5m 20s
+        Examples:
+          hyprclock --now
+          hyprclock -t 10min
+          hyprclock --timer 1h 5m 20s
+          hyprclock --config micro
     "#);
 }
 
