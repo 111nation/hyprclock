@@ -207,7 +207,6 @@ pub fn get_config_home () -> Result<String, String> {
 
     #[cfg(unix)]
     // Try load $XDG_CONFIG_HOME otherwise try load $HOME/.config
-    // TODO: Fix this!!!!
     let config_home = match env::var("XDG_CONFIG_HOME") {
         Ok(dat) => dat,
         Err(_) => {
@@ -231,69 +230,79 @@ pub fn get_config_home () -> Result<String, String> {
 
     let config_home = config_home + "/hypr";
 
-    // Try create directory if config direction doesnt exist
+    // Try create config directory if doesnt exist
     match std::fs::exists(config_home.clone()) {
         Ok(exists) => {
             if !exists {
                 let _ = std::fs::create_dir_all(config_home.clone());
-
-                // Create configuration file
-                let mut file = match File::create(config_home.clone() + "/hyprclock.toml") {
-                    Ok(dat) => dat,
-                    Err(_) => return Err("Failed to create default configuration".into()),
-                };
-
-                if !populate_default_config(&mut file) {
-                    return Err("Could not provide default configuration options".into());
-                }
             }
-
         },
-        Err(_) => {
-            return Err("Attempted to find config directory, but failed!".into()); 
+        Err(_) => return Err("Attempted to find config directory, but failed!".into()),
+    }
+
+    // Determines if hyprclock.toml or hyprclock.conf exists
+    let toml = std::fs::exists(config_home.clone() + "/hyprclock.toml");
+    let conf = std::fs::exists(config_home.clone() + "/hyprclock.conf");
+
+    if conf.is_err() || toml.is_err() { 
+        return Err(format!("Failed to read from \"{}\"", config_home));
+    }
+
+    let toml = toml.unwrap();
+    let conf = conf.unwrap();
+
+    if  !toml && !conf {
+        let file = config_home.clone() + "/hyprclock.toml";
+        if !create_default_config(&file) {
+            return Err("Failed to create default configuration!".into());
         }
     }
 
     Ok(config_home)
 }
 
-fn populate_default_config (file: &mut File) -> bool {
+fn create_default_config(file: &String) -> bool {
     // False - Unsuccessful operation
     // True - Successful operation
-    let data = r#"
-        [clock]
-        military = true
-        truncate = true
+    let data = r#"[clock]
+military = true
+truncate = true
 
-        [clock.sound]
-        end = "/home/tafara/Projects/hyprclock/notification.mp3"
-        tick = "/home/tafara/Projects/hyprclock/tick.mp3"
+[clock.sound]
+end = "/home/tafara/Projects/hyprclock/notification.mp3"
+tick = "/home/tafara/Projects/hyprclock/tick.mp3"
 
-        [window]
-        color = "rgba(0,0,0,0.7)"
+[window]
+color = "rgba(0,0,0,0.7)"
 
-        [window.border]
-        width = 0
-        radius = 0
-        color = ""
+[window.border]
+width = 0
+radius = 0
+color = ""
 
-        [font]
-        color = "green"
-        weight = 300
-        family = "Courier New"
-        italic = false
-        size=0.50
-        spacing=1
+[font]
+color = "green"
+weight = 300
+family = "Courier New"
+italic = false
+size=0.50
+spacing=1
 
-        [font.stroke]
-        color = "rgba(0,0,0,0)"
-        width = 0
+[font.stroke]
+color = "rgba(0,0,0,0)"
+width = 0
     "#;
+
+    let mut file = match File::create(file) {
+        Ok(dat) => dat,
+        Err(_) => return false,
+    };
 
     match file.write_all(data.as_bytes()) {
         Ok(_) => return true,
         Err(_) => return false,
     }
+
 }
 
 fn open_read_mode(file_name: String) -> Result<File, String> {
