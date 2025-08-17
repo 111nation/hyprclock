@@ -1,7 +1,6 @@
 # hyprclock
 _A light and configurable clock_
 
-[!Note]
 > hyprclock is not just a basic clock!
 > hyprclock also allows for deep customization of the UI using `.toml` configuration files. You can customize from the clock fonts clock color, clock sounds, clock time format etc...
 > hyprclock is terminal focused, you launch it via CLI (use -h flag for help)
